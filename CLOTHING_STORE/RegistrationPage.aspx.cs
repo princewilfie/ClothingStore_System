@@ -20,6 +20,14 @@ namespace CLOTHING_STORE
             string ContactNumber = contactNumber.Text.Trim();
             string Address = address.Text.Trim();
             string Password = password.Text;
+            string ConfirmPassword = confirmPassword.Text;
+
+            if (Password != ConfirmPassword)
+            {
+                // Passwords do not match, display an error message
+                errorMessage.Text = "Passwords do not match.";
+                return; // Exit the method
+            }
 
             // Insert user data into the database
             string connectionString = ConfigurationManager.ConnectionStrings["ClothingStoreDBConnectionString"].ConnectionString;

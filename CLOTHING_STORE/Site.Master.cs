@@ -19,7 +19,7 @@ namespace CLOTHING_STORE
             Session.Abandon();
 
             // Redirect the user to the login page
-            Response.Redirect("~/LoginPage.aspx");
+            Response.Redirect("~/WelcomePage.aspx");
         }
     }
 }

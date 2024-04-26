@@ -111,6 +111,8 @@
                                     <asp:TextBox ID="confirmPassword" runat="server" CssClass="form-control" placeholder="Confirm password"></asp:TextBox>
                                 </div>
                             </div>
+                            <asp:Label ID="errorMessage" runat="server" Text="" CssClass="text-danger"></asp:Label>
+
                             <asp:Button ID="RegisterButton" runat="server" Text="Register" CssClass="btn btn-primary btn-block" OnClick="RegisterButton_Click" />
                         </form>
                         <hr>
