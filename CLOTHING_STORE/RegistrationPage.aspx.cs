@@ -66,7 +66,7 @@ namespace CLOTHING_STORE
                         }
                     }
                     catch (Exception ex)
-                    {
+                    {   
                         // Handle any exceptions
                         // You can display an error message to the user or log the exception for debugging
                     }

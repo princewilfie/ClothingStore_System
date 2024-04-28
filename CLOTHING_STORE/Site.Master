@@ -30,6 +30,9 @@
         .navbar-brand {
             margin-right: 1rem;
         }
+        .bg-light-pink {
+         background-color: #FFC0CB;
+}
     </style>
 </head>
 <body>
@@ -85,9 +88,35 @@
                 <asp:ContentPlaceHolder ID="MainContent" runat="server">
                 </asp:ContentPlaceHolder>
                 <hr />
-                <footer>
-                    <p>&copy; <%: DateTime.Now.Year %> - My ASP.NET Application</p>
-                </footer>
+                <footer class="bg-light-pink text-dark py-5">s
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img src="images/FashionFusionLogo.png" alt="Footer Logo" class="img-fluid mb-4" style="max-width: 150px;">
+                            <p class="text-muted">FashionFusion caters to those who want to express themselves through their clothing, offering a variety of styles to mix and match and create unique looks.</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h5>Quick Links</h5>
+                            <ul class="list-unstyled">
+                                <li><a href="#" class="text-decoration-none text-dark">Home</a></li>
+                                <li><a href="/About" class="text-decoration-none text-dark">About</a></li>
+                                <li><a href="#" class="text-decoration-none text-dark">Contact</a></li>
+                                <li><a href="#" class="text-decoration-none text-dark">Events</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <h5>Contact Us</h5>
+                            <ul class="list-unstyled">
+                                <li><i class="bi bi-geo-alt-fill"></i> 123 Street, City, Country</li>
+                                <li><i class="bi bi-telephone-fill"></i> +123 456 7890</li>
+                                <li><i class="bi bi-envelope-fill"></i> info@runwithme.com</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <hr class="my-4">
+                    <p class="text-center">&copy; <%: DateTime.Now.Year %> RunWithMe. All Rights Reserved.</p>
+                </div>
+            </footer>
             </div>
         </div>
 
