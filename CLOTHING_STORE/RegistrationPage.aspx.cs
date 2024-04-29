@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Security.Cryptography;
+using System.Text;
+
 
 namespace CLOTHING_STORE
 {
@@ -29,21 +32,26 @@ namespace CLOTHING_STORE
                 return; // Exit the method
             }
 
+            // Encrypt the password using SHA-256 algorithm
+            string encryptedPassword = EncryptPassword(Password);
+
             // Insert user data into the database
             string connectionString = ConfigurationManager.ConnectionStrings["ClothingStoreDBConnectionString"].ConnectionString;
-            string query = "INSERT INTO Users (FirstName, LastName, Email, ContactNumber, Address, Password) VALUES (@FirstName, @LastName, @Email, @ContactNumber, @Address, @Password)";
+            string storedProcedure = "SP_INSERT_USER_REGISTRATION";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                using (SqlCommand command = new SqlCommand(query, connection))
+                using (SqlCommand command = new SqlCommand(storedProcedure, connection))
                 {
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+
                     // Add parameters to the command
                     command.Parameters.AddWithValue("@FirstName", FirstName);
                     command.Parameters.AddWithValue("@LastName", LastName);
                     command.Parameters.AddWithValue("@Email", Email);
                     command.Parameters.AddWithValue("@ContactNumber", ContactNumber);
                     command.Parameters.AddWithValue("@Address", Address);
-                    command.Parameters.AddWithValue("@Password", Password);
+                    command.Parameters.AddWithValue("@Password", encryptedPassword);
 
                     try
                     {
@@ -71,6 +79,25 @@ namespace CLOTHING_STORE
                         // You can display an error message to the user or log the exception for debugging
                     }
                 }
+
+
+            }
+        }
+
+        // Method to encrypt the password using SHA-256 algorithm
+        private string EncryptPassword(string password)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+
+                // Convert the byte array to a hexadecimal string
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < hashedBytes.Length; i++)
+                {
+                    builder.Append(hashedBytes[i].ToString("x2"));
+                }
+                return builder.ToString();
             }
         }
 

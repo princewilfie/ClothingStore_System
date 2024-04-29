@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace CLOTHING_STORE
 {
@@ -57,8 +59,11 @@ namespace CLOTHING_STORE
                             // Password found in the database
                             string storedPassword = result.ToString();
 
-                            // Compare the stored password with the provided password
-                            if (storedPassword == password)
+                            // Encrypt the provided password for comparison
+                            string encryptedPassword = EncryptPassword(password);
+
+                            // Compare the stored encrypted password with the provided encrypted password
+                            if (storedPassword == encryptedPassword)
                             {
                                 // Passwords match, user is authenticated
                                 return true;
@@ -75,6 +80,23 @@ namespace CLOTHING_STORE
 
             // Either user not found or password doesn't match
             return false;
+        }
+
+
+        private string EncryptPassword(string password)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+
+                // Convert the byte array to a hexadecimal string
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < hashedBytes.Length; i++)
+                {
+                    builder.Append(hashedBytes[i].ToString("x2"));
+                }
+                return builder.ToString();
+            }
         }
     }
 }

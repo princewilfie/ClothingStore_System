@@ -26,13 +26,16 @@ namespace CLOTHING_STORE
             // Connection string
             string connectionString = ConfigurationManager.ConnectionStrings["ClothingStoreDBConnectionString"].ConnectionString;
 
-            // Query to fetch event data
-            string query = "SELECT UserId, FirstName, LastName, Email, ContactNumber, Address, Password FROM Users";
+            // Stored procedure name
+            string storedProcedure = "SP_GET_USERS_ADMINPANEL";
 
             // Create a connection and command objects
             using (SqlConnection connection = new SqlConnection(connectionString))
-            using (SqlCommand command = new SqlCommand(query, connection))
+            using (SqlCommand command = new SqlCommand(storedProcedure, connection))
             {
+                // Specify that it's a stored procedure
+                command.CommandType = CommandType.StoredProcedure;
+
                 // Open the connection
                 connection.Open();
 
@@ -43,12 +46,12 @@ namespace CLOTHING_STORE
                     adapter.Fill(dataTable);
                 }
 
-
                 // Bind the DataTable to the GridView
                 UsersGridView.DataSource = dataTable;
                 UsersGridView.DataBind();
             }
         }
+
 
     }
 }

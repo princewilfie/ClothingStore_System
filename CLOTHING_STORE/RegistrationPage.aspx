@@ -102,13 +102,14 @@
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label for="password">Password:</label>
-                                    <asp:TextBox ID="password" runat="server" CssClass="form-control" placeholder="Enter password"></asp:TextBox>
+                                    <asp:TextBox ID="password" runat="server" CssClass="form-control" TextMode="Password" placeholder="Enter password"></asp:TextBox>
+
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label for="confirmPassword">Confirm Password:</label>
-                                    <asp:TextBox ID="confirmPassword" runat="server" CssClass="form-control" placeholder="Confirm password"></asp:TextBox>
+                                    <asp:TextBox ID="confirmPassword" runat="server" CssClass="form-control" TextMode="Password" placeholder="Confirm password"></asp:TextBox>
                                 </div>
                             </div>
                             <asp:Label ID="errorMessage" runat="server" Text="" CssClass="text-danger"></asp:Label>
