@@ -23,7 +23,7 @@ namespace CLOTHING_STORE
             if (username == "admin" && password == "1234")
             {
                 // Redirect to admin panel
-                Response.Redirect("AdminPanel.aspx");
+                Response.Redirect("AdminDashBoard.aspx");
             }
             else
             {

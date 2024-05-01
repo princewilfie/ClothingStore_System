@@ -1,70 +1,34 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Shoes.aspx.cs" Inherits="CLOTHING_STORE.Shoes" %>
+<%@ Import Namespace="System.Data" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-
-    <div class="container-fluid">
-        <h2 class="text-center mt-4 mb-4">Shoes</h2> <!-- Add this line for the "Shoes" text -->
+    <div class="container-fluid mt-5">
         <div class="row">
             <!-- Left vertical image column -->
             <div class="col-lg-2 d-none d-lg-block">
                 <img src="images/advertise1.png" class="img-fluid h-100" alt="Vertical Advertisement Left">
             </div>
+            <!-- Products section -->
             <div class="col-lg-8">
+               <h2 class="text-center mt-4 mb-4">Shoes</h2>
                 <div class="row">
-                    <div class="col-lg-4 col-md-6 mt-4 mb-3">
-                        <div class="card h-100">
-                            <img class="card-img-top" src="https://via.placeholder.com/300" alt="">
-                            <div class="card-body">
-                                <h4 class="card-title">Product 1</h4>
-                                <p class="card-text">Description of producta 1.</p>
+                    <%-- Loop through each product --%>
+                    <% foreach (DataRow row in ProductsDataTable.Rows) { %>
+                        <div class="col-lg-4 mb-4">
+                            <div class="card h-100">
+                                <%-- Product image (if available) --%>
+                                <img class="card-img-top" src="<%= row["ImageUrl"] %>" alt="Product Image" style="width: 100%; height: 300px;" />
+                                <div class="card-body">
+                                    <%-- Product name --%>
+                                    <h5 class="card-title"><%= row["ProductName"] %></h5>
+                                    <%-- Product price --%>
+                                    <p class="card-text">Price: P<%= string.Format("{0:N0}", row["UnitPrice"]) %></p>
+                                    <%-- Add to cart button or other actions --%>
+                                    <asp:Button ID="btnAddToCart" runat="server" Text="Add to Cart" CssClass="btn btn-primary btn-block" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 mt-4 mb-3">
-                        <div class="card h-100">
-                            <img class="card-img-top" src="https://via.placeholder.com/300" alt="">
-                            <div class="card-body">
-                                <h4 class="card-title">Product 2</h4>
-                                <p class="card-text">Description of product 2.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 mt-4 mb-3">
-                        <div class="card h-100">
-                            <img class="card-img-top" src="https://via.placeholder.com/300" alt="">
-                            <div class="card-body">
-                                <h4 class="card-title">Product 3</h4>
-                                <p class="card-text">Description of product 3.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 mb-3">
-                        <div class="card h-100">
-                            <img class="card-img-top" src="https://via.placeholder.com/300" alt="">
-                            <div class="card-body">
-                                <h4 class="card-title">Product 4</h4>
-                                <p class="card-text">Description of product 4.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 mb-3">
-                        <div class="card h-100">
-                            <img class="card-img-top" src="https://via.placeholder.com/300" alt="">
-                            <div class="card-body">
-                                <h4 class="card-title">Product 5</h4>
-                                <p class="card-text">Description of product 5.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 mb-3">
-                        <div class="card h-100">
-                            <img class="card-img-top" src="https://via.placeholder.com/300" alt="">
-                            <div class="card-body">
-                                <h4 class="card-title">Product 6</h4>
-                                <p class="card-text">Description of product 6.</p>
-                            </div>
-                        </div>
-                    </div>
+                    <% } %>
                 </div>
             </div>
             <!-- Right vertical image column -->
