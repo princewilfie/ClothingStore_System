@@ -50,13 +50,17 @@ namespace CLOTHING_STORE
         {
             string connectionString = ConfigurationManager.ConnectionStrings["ClothingStoreDBConnectionString"].ConnectionString;
 
+            // Get tshirt details from input controls
+            string tshirtName = TshirtNameTextBox.Text;
+            decimal unitPrice = decimal.Parse(UnitPriceTextBox.Text);
+
+            // Call the stored procedure to insert the new tshirt
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string query = "INSERT INTO Tshirt (Tshirt_Id, TshirtName, UnitPrice) VALUES (@TshirtId, @TshirtName, @UnitPrice)";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@TshirtId", GetNextTshirtId()); // Get the next available TshirtId
-                command.Parameters.AddWithValue("@TshirtName", TshirtNameTextBox.Text);
-                command.Parameters.AddWithValue("@UnitPrice", decimal.Parse(UnitPriceTextBox.Text));
+                SqlCommand command = new SqlCommand("SP_INSERT_TSHIRT", connection);
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("@TshirtName", tshirtName);
+                command.Parameters.AddWithValue("@UnitPrice", unitPrice);
 
                 connection.Open();
                 command.ExecuteNonQuery();

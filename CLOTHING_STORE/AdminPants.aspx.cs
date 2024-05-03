@@ -50,18 +50,23 @@ namespace CLOTHING_STORE
         {
             string connectionString = ConfigurationManager.ConnectionStrings["ClothingStoreDBConnectionString"].ConnectionString;
 
+            // Get pants details from input controls
+            string pantsName = PantsNameTextBox.Text;
+            decimal unitPrice = decimal.Parse(UnitPriceTextBox.Text);
+
+            // Call the stored procedure to insert the new pants
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string query = "INSERT INTO Pants (Pants_Id, PantsName, UnitPrice) VALUES (@PantsId, @PantsName, @UnitPrice)";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@PantsId", GetNextPantsId()); // Get the next available PantsId
-                command.Parameters.AddWithValue("@PantsName", PantsNameTextBox.Text);
-                command.Parameters.AddWithValue("@UnitPrice", decimal.Parse(UnitPriceTextBox.Text));
+                SqlCommand command = new SqlCommand("SP_INSERT_PANTS", connection);
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("@PantsName", pantsName);
+                command.Parameters.AddWithValue("@UnitPrice", unitPrice);
 
                 connection.Open();
                 command.ExecuteNonQuery();
             }
         }
+
 
         private int GetNextPantsId()
         {

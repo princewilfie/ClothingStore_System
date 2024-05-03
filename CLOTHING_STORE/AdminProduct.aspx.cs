@@ -90,13 +90,17 @@ namespace CLOTHING_STORE
         {
             string connectionString = ConfigurationManager.ConnectionStrings["ClothingStoreDBConnectionString"].ConnectionString;
 
+            // Get product details from input controls
+            string productName = productNameTextBox.Text;
+            decimal unitPrice = decimal.Parse(unitPriceTextBox.Text);
+
+            // Call the stored procedure to insert the new product
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string query = "INSERT INTO Products (Product_Id, ProductName, UnitPrice) VALUES (@Product_Id, @ProductName, @UnitPrice)";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@Product_Id", GetNextProductId()); // Get the next available Product_Id
-                command.Parameters.AddWithValue("@ProductName", productNameTextBox.Text);
-                command.Parameters.AddWithValue("@UnitPrice", decimal.Parse(unitPriceTextBox.Text));
+                SqlCommand command = new SqlCommand("SP_INSERT_SHOES", connection);
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("@ProductName", productName);
+                command.Parameters.AddWithValue("@UnitPrice", unitPrice);
 
                 connection.Open();
                 command.ExecuteNonQuery();
