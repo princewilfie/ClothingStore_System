@@ -1,70 +1,90 @@
-﻿using System;
-using System.Configuration;
-using System.Data;
+﻿using System.Configuration;
 using System.Data.SqlClient;
+using System.Data;
+using System;
 
 namespace CLOTHING_STORE
 {
     public partial class Shoes : System.Web.UI.Page
     {
-        // Property to store product data
-        protected DataTable ProductsDataTable { get; set; }
-
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
-                // Call a method to fetch product data
                 PopulateProductData();
+            }
+
+            if (Request["__EVENTTARGET"] == "addToCart")
+            {
+                // Extract product ID and quantity from the event argument
+                string[] args = Request["__EVENTARGUMENT"].Split('|');
+                int productId = Convert.ToInt32(args[0]);
+                int quantity = Convert.ToInt32(args[1]);
+
+                // Add the product to the cart session
+                DataTable cart = GetCartDataTable();
+                AddOrUpdateCartItem(cart, "Product_Id", productId, quantity);
+                Session["Cart"] = cart;
+
+                // Redirect to cart page
+                Response.Redirect("Cart.aspx");
             }
         }
 
         protected void PopulateProductData()
         {
-            // Initialize ProductsDataTable
-            ProductsDataTable = new DataTable();
-
-            // Connection string
             string connectionString = ConfigurationManager.ConnectionStrings["ClothingStoreDBConnectionString"].ConnectionString;
-
-            // SQL query to fetch product data
             string query = "SELECT Product_Id, ProductName, UnitPrice FROM Products";
 
-            // Create a connection and command objects
             using (SqlConnection connection = new SqlConnection(connectionString))
             using (SqlCommand command = new SqlCommand(query, connection))
             {
-                // Open the connection
                 connection.Open();
-
-                // Execute the command and fetch data into ProductsDataTable
-                using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                using (SqlDataReader reader = command.ExecuteReader())
                 {
-                    adapter.Fill(ProductsDataTable);
+                    ProductsRepeater.DataSource = reader;
+                    ProductsRepeater.DataBind();
                 }
             }
+        }
 
-            // Add the 'ImageUrl' column to the DataTable
-            ProductsDataTable.Columns.Add("ImageUrl", typeof(string));
-
-            // Now you can populate the 'ImageUrl' column with the appropriate image URLs for each product
-            foreach (DataRow row in ProductsDataTable.Rows)
+        protected DataTable GetCartDataTable()
+        {
+            DataTable cart;
+            if (Session["Cart"] == null)
             {
-                // Assuming you have a method to get the image URL based on the product ID
-                string imageUrl = GetImageUrl(Convert.ToInt32(row["Product_Id"]));
-                row["ImageUrl"] = imageUrl;
+                cart = new DataTable();
+                cart.Columns.Add("Product_Id", typeof(int));
+                cart.Columns.Add("Quantity", typeof(int));
+                cart.PrimaryKey = new DataColumn[] { cart.Columns["Product_Id"] }; // Define primary key on Product_Id
+                Session["Cart"] = cart;
+            }
+            else
+            {
+                cart = (DataTable)Session["Cart"];
+            }
+            return cart;
+        }
+
+        protected void AddOrUpdateCartItem(DataTable cart, string idColumnName, int productId, int quantity)
+        {
+            // Check if the cart already contains the product
+            DataRow[] existingItems = cart.Select($"{idColumnName} = {productId}");
+
+            if (existingItems.Length > 0)
+            {
+                // If item already exists in the cart, update the quantity
+                existingItems[0]["Quantity"] = (int)existingItems[0]["Quantity"] + quantity;
+            }
+            else
+            {
+                // If item does not exist in the cart, add it as a new row
+                DataRow newRow = cart.NewRow();
+                newRow[idColumnName] = productId;
+                newRow["Quantity"] = quantity;
+                cart.Rows.Add(newRow);
             }
         }
 
-        // Method to retrieve image URL based on product ID
-        protected string GetImageUrl(int productId)
-        {
-            // Implement logic to fetch image URL based on the product ID
-            // For example:
-            // return "images/shoes" + productId + ".jpg";
-
-            // Placeholder return statement (replace with actual logic)
-            return "images/shoes" + productId + ".jpg";
-        }
     }
 }

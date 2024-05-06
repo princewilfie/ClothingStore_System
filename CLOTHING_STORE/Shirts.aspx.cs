@@ -1,71 +1,91 @@
-﻿using System;
-using System.Configuration;
-using System.Data;
+﻿using System.Configuration;
 using System.Data.SqlClient;
-using System.Web.UI;
+using System.Data;
+using System;
 
 namespace CLOTHING_STORE
 {
-    public partial class Shirts : Page
+    public partial class Shirts : System.Web.UI.Page
     {
-        // Define a public property to store the T-shirts DataTable
-        protected DataTable TshirtsDataTable { get; set; }
-
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
-                // Call a method to fetch T-shirt data
                 PopulateTshirtData();
+            }
+
+            if (Request["__EVENTTARGET"] == "addToCart")
+            {
+                // Extract T-shirt ID and quantity from the event argument
+                string[] args = Request["__EVENTARGUMENT"].Split('|');
+                int tshirtId = Convert.ToInt32(args[0]);
+                int quantity = Convert.ToInt32(args[1]);
+
+                // Add the T-shirt to the cart session
+                DataTable cart = GetCartDataTable();
+                AddOrUpdateCartItem(cart, "Tshirt_Id", tshirtId, quantity);
+                Session["Cart"] = cart;
+
+                // Redirect to cart page
+                Response.Redirect("Cart.aspx");
             }
         }
 
         protected void PopulateTshirtData()
         {
-            // Initialize TshirtsDataTable
-            TshirtsDataTable = new DataTable();
-
-            // Connection string
             string connectionString = ConfigurationManager.ConnectionStrings["ClothingStoreDBConnectionString"].ConnectionString;
-
-            // SQL query to fetch T-shirt data
             string query = "SELECT Tshirt_Id, TshirtName, UnitPrice FROM Tshirt";
 
-            // Create a connection and command objects
             using (SqlConnection connection = new SqlConnection(connectionString))
             using (SqlCommand command = new SqlCommand(query, connection))
             {
-                // Open the connection
                 connection.Open();
-
-                // Execute the command and fetch data into TshirtsDataTable
-                using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                using (SqlDataReader reader = command.ExecuteReader())
                 {
-                    adapter.Fill(TshirtsDataTable);
+                    TshirtsRepeater.DataSource = reader;
+                    TshirtsRepeater.DataBind();
                 }
             }
+        }
 
-            // Add the 'ImageUrl' column to the DataTable
-            TshirtsDataTable.Columns.Add("ImageUrl", typeof(string));
-
-            // Now you can populate the 'ImageUrl' column with the appropriate image URLs for each T-shirt
-            foreach (DataRow row in TshirtsDataTable.Rows)
+        protected DataTable GetCartDataTable()
+        {
+            DataTable cart;
+            if (Session["Cart"] == null)
             {
-                // Assuming you have a method to get the image URL based on the T-shirt ID
-                string imageUrl = GetTshirtImageUrl(Convert.ToInt32(row["Tshirt_Id"]));
-                row["ImageUrl"] = imageUrl;
+                cart = new DataTable();
+                cart.Columns.Add("Tshirt_Id", typeof(int)); // Ensure column name matches exactly with what is in the database
+                cart.Columns.Add("Quantity", typeof(int));
+                cart.PrimaryKey = new DataColumn[] { cart.Columns["Tshirt_Id"] }; // Define primary key on Tshirt_Id
+                Session["Cart"] = cart;
+            }
+            else
+            {
+                cart = (DataTable)Session["Cart"];
+            }
+            return cart;
+        }
+
+        protected void AddOrUpdateCartItem(DataTable cart, string idColumnName, int tshirtId, int quantity)
+        {
+            // Check if the cart already contains the t-shirt
+            DataRow[] existingItems = cart.Select($"{idColumnName} = {tshirtId}");
+
+            if (existingItems.Length > 0)
+            {
+                // If item already exists in the cart, update the quantity
+                existingItems[0]["Quantity"] = (int)existingItems[0]["Quantity"] + quantity;
+            }
+            else
+            {
+                // If item does not exist in the cart, add it as a new row
+                DataRow newRow = cart.NewRow();
+                newRow[idColumnName] = tshirtId;
+                newRow["Quantity"] = quantity;
+                cart.Rows.Add(newRow);
             }
         }
 
-        // Method to retrieve image URL based on T-shirt ID
-        protected string GetTshirtImageUrl(int tshirtId)
-        {
-            // Implement logic to fetch image URL based on the T-shirt ID
-            // For example:
-            // return "images/tshirts/tshirt" + tshirtId + ".jpg";
-
-            // Placeholder return statement (replace with actual logic)
-            return "images/tshirt" + tshirtId + ".jpg";
-        }
     }
 }
+

@@ -25,6 +25,7 @@ namespace CLOTHING_STORE
 
             // Refresh the products list
             LoadProducts();
+            int newProductId = GetNextProductId();
 
             // Fetch the newly added product and pass it to Pants page
             FetchAndPassNewProduct();
