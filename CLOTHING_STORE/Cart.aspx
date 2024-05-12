@@ -19,76 +19,20 @@
         </asp:GridView>
 
         <div class="mt-3">
-            <asp:Button runat="server" Text="Checkout" CssClass="btn btn-primary" data-toggle="modal" data-target="#checkoutModal" />
+<asp:Button ID="btnCheckout" runat="server" Text="Checkout" CssClass="btn btn-primary" OnClick="Checkout_Click" OnClientClick="return confirmCheckout();" />
+            <asp:Label ID="lblEmptyCartMessage" runat="server" Text=""></asp:Label>
         </div>
     </div>
 
-    <!-- Checkout Modal -->
-    <div class="modal fade" id="checkoutModal" tabindex="-1" role="dialog" aria-labelledby="checkoutModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="checkoutModalLabel">Checkout Summary</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="checkoutModalBody">
-                    <!-- Checkout summary details will be dynamically populated here -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <!-- Checkout button -->
-                    <button type="button" class="btn btn-primary" id="checkoutButton">Checkout</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        // Function to populate the checkout modal with product details
-        function populateCheckoutModal() {
-            var modalBody = document.getElementById('checkoutModalBody');
-            var rows = document.querySelectorAll('#<%= gvCart.ClientID %> tbody tr');
-
-            // Initialize total price
-            var totalPrice = 0;
-
-            // Clear modal body
-            modalBody.innerHTML = '';
-
-            // Loop through each row in the GridView
-            rows.forEach(function (row) {
-                var productName = row.cells[0].innerText;
-                var unitPrice = parseFloat(row.cells[1].innerText.replace('$', '').replace(',', '')); // Parse float from unit price
-                var quantity = parseInt(row.cells[2].innerText); // Parse int from quantity
-                var rowTotalPrice = parseFloat(row.cells[3].innerText.replace('$', '').replace(',', '')); // Parse float from total price
-
-                // Check if parsing is successful
-                if (!isNaN(unitPrice) && !isNaN(quantity) && !isNaN(rowTotalPrice)) {
-                    // Append product details to modal body
-                    modalBody.innerHTML += '<p><strong>' + productName + '</strong><br>Unit Price: $' + unitPrice.toFixed(2) + '<br>Quantity: ' + quantity + '<br>Total Price: $' + rowTotalPrice.toFixed(2) + '</p>';
-
-                    // Update total price
-                    totalPrice += rowTotalPrice;
-                }
-            });
-
-            // Append total price to modal body
-            modalBody.innerHTML += '<hr><p><strong>Total Price: $' + totalPrice.toFixed(2) + '</strong></p>';
+        // JavaScript function to confirm checkout before postback
+        function confirmCheckout() {
+            if (confirm('Are you sure you want to proceed with the checkout?')) {
+                __doPostBack('<%= btnCheckout.ClientID %>', ''); // Trigger the server-side click event
+            } else {
+                return false; // Prevent default form submission
+            }
         }
-
-        // Event listener for modal show event
-        $('#checkoutModal').on('show.bs.modal', function (e) {
-            populateCheckoutModal();
-        });
-
-        // Event listener for checkout button click
-        $('#checkoutButton').click(function () {
-            // Redirect to Order.aspx page
-            window.location.href = 'Order.aspx';
-        });
     </script>
+
 </asp:Content>

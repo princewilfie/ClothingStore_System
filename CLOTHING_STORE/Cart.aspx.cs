@@ -167,14 +167,7 @@ namespace CLOTHING_STORE
             DataTable cart = (DataTable)Session["Cart"];
             if (cart != null && cart.Rows.Count > 0)
             {
-                // Debugging: Output the contents of the cart to the console
-                foreach (DataRow row in cart.Rows)
-                {
-                    Console.WriteLine($"Product: {row["ProductName"]}, Quantity: {row["Quantity"]}, Unit Price: {row["UnitPrice"]}, Total Price: {row["TotalPrice"]}");
-                }
-
-                // Insert the cart items into the database
-                string connectionString = ConfigurationManager.ConnectionStrings["YourConnectionString"].ConnectionString;
+                string connectionString = ConfigurationManager.ConnectionStrings["ClothingStoreDBConnectionString"].ConnectionString;
                 string insertQuery = "INSERT INTO Orders (ProductName, Quantity, UnitPrice, TotalPrice) VALUES (@ProductName, @Quantity, @UnitPrice, @TotalPrice)";
 
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -203,9 +196,13 @@ namespace CLOTHING_STORE
             else
             {
                 // Display a message indicating that the cart is empty
-                // Redirect the user back to the cart page or any other appropriate action
+                // You can use a label or any other control for this
             }
         }
+
+
+
+
 
         protected void DisplayCartContents()
         {
@@ -218,8 +215,7 @@ namespace CLOTHING_STORE
             }
             else
             {
-                // Display a message indicating that the cart is empty
-                // You can use a label or any other control for this
+                lblEmptyCartMessage.Text = "Your cart is empty."; // Assuming lblEmptyCartMessage is an ASP.NET label control
             }
         }
     }

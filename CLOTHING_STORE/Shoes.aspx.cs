@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using System.Data;
 using System;
+using System.Linq;
 
 namespace CLOTHING_STORE
 {
@@ -23,7 +24,7 @@ namespace CLOTHING_STORE
 
                 // Add the product to the cart session
                 DataTable cart = GetCartDataTable();
-                AddOrUpdateCartItem(cart, "Product_Id", productId, quantity);
+                AddOrUpdateProductCartItem(cart, productId, quantity);
                 Session["Cart"] = cart;
 
                 // Redirect to cart page
@@ -66,25 +67,27 @@ namespace CLOTHING_STORE
             return cart;
         }
 
-        protected void AddOrUpdateCartItem(DataTable cart, string idColumnName, int productId, int quantity)
+        protected void AddOrUpdateProductCartItem(DataTable cart, int productId, int quantity)
         {
-            // Check if the cart already contains the product
-            DataRow[] existingItems = cart.Select($"{idColumnName} = {productId}");
+            DataRow existingItem = cart.AsEnumerable()
+                                        .FirstOrDefault(row => (int)row["Product_Id"] == productId);
 
-            if (existingItems.Length > 0)
+            if (existingItem != null)
             {
                 // If item already exists in the cart, update the quantity
-                existingItems[0]["Quantity"] = (int)existingItems[0]["Quantity"] + quantity;
+                existingItem["Quantity"] = (int)existingItem["Quantity"] + quantity;
             }
             else
             {
                 // If item does not exist in the cart, add it as a new row
                 DataRow newRow = cart.NewRow();
-                newRow[idColumnName] = productId;
+                newRow["Product_Id"] = productId;
                 newRow["Quantity"] = quantity;
                 cart.Rows.Add(newRow);
             }
         }
+
+
 
     }
 }
