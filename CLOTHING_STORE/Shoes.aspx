@@ -26,10 +26,14 @@
                                         <h5 class="card-title"><%# Eval("ProductName") %></h5>
                                         <!-- Product price -->
                                         <p class="card-text">Price: P<%# string.Format("{0:N0}", Eval("UnitPrice")) %></p>
+                                        <!-- Quantity available -->
+                                        <p class="card-text">Quantity Available: <%# Eval("QuantityAvailable") %></p>
+                                        <!-- Size -->
+                                        <p class="card-text">Size: <%# Eval("Size") %></p>
                                         <!-- Quantity input field -->
                                         <input type="number" id="quantity_<%# Eval("Product_Id") %>" min="1" value="1" />
                                         <!-- Add to Cart button -->
-                                        <asp:Button runat="server" ID='Button1' Text="Add to Cart" CssClass="btn btn-primary mt-2 addToCartBtn" OnClientClick='<%# "addToCart(" + Eval("Product_Id") + ")" %>' />
+<asp:Button runat="server" ID='Button1' Text="Add to Cart" CssClass="btn btn-primary mt-2 addToCartBtn" OnClientClick='<%# "addToCart(" + Eval("Product_Id") + ", " + Eval("QuantityAvailable") + ")" %>' />
                                     </div>
                                 </div>
                             </div>
@@ -48,13 +52,37 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
+        <asp:Label ID="Label1" runat="server" Text="" CssClass="text-danger" Visible="false" />
+
+
     <script>
-        function addToCart(productId) {
+        function addToCart(productId, quantityAvailable) {
             var quantityInput = document.getElementById('quantity_' + productId);
             var quantity = quantityInput.value;
+
+            // Convert quantity to integer
+            var quantityInt = parseInt(quantity);
+
+            // Check if quantity is not a number or less than 1
+            if (isNaN(quantityInt) || quantityInt < 1) {
+                alert('Please enter a valid quantity.');
+                return;
+            }
+
+            // Check if quantity exceeds available quantity or is 0
+            if (quantityInt > quantityAvailable) {
+                alert('Selected quantity exceeds available quantity.');
+                return;
+            }
+
+            if (quantityAvailable == 0) {
+                alert('Item is out of stock.');
+                return;
+            }
 
             // Send the product ID and quantity to the server
             __doPostBack('addToCart', productId + '|' + quantity);
         }
     </script>
+
 </asp:Content>

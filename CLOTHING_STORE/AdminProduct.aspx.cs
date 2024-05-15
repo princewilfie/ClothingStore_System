@@ -58,7 +58,7 @@ namespace CLOTHING_STORE
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string query = "SELECT Product_Id, ProductName, UnitPrice FROM Products";
+                string query = "SELECT Product_Id, ProductName, UnitPrice, QuantityAvailable, Size FROM Products";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
@@ -70,15 +70,16 @@ namespace CLOTHING_STORE
                         Product product = new Product
                         {
                             Product_Id = Convert.ToInt32(reader["Product_Id"]),
-                            ProductName = Convert.ToString(reader["ProductName"]),
-                            UnitPrice = Convert.ToDecimal(reader["UnitPrice"])
+                            ProductName = reader["ProductName"] != DBNull.Value ? Convert.ToString(reader["ProductName"]) : string.Empty,
+                            UnitPrice = reader["UnitPrice"] != DBNull.Value ? Convert.ToDecimal(reader["UnitPrice"]) : 0m,
+                            QuantityAvailable = reader["QuantityAvailable"] != DBNull.Value ? Convert.ToInt32(reader["QuantityAvailable"]) : 0,
+                            Size = reader["Size"] != DBNull.Value ? Convert.ToString(reader["Size"]) : string.Empty
                         };
 
-                        // Format the UnitPrice without trailing zeros
-                        product.UnitPrice = decimal.Round(product.UnitPrice, 0); // Round to 2 decimal places
+                        // Optionally format UnitPrice
+                        product.UnitPrice = decimal.Round(product.UnitPrice, 0); // Round to 0 decimal places
                         products.Add(product);
                     }
-
 
                     reader.Close();
                 }
@@ -87,26 +88,33 @@ namespace CLOTHING_STORE
             return products;
         }
 
+
+
+
         private void AddNewItem()
         {
             string connectionString = ConfigurationManager.ConnectionStrings["ClothingStoreDBConnectionString"].ConnectionString;
 
-            // Get product details from input controls
-            string productName = productNameTextBox.Text;
-            decimal unitPrice = decimal.Parse(unitPriceTextBox.Text);
-
-            // Call the stored procedure to insert the new product
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                SqlCommand command = new SqlCommand("SP_INSERT_SHOES", connection);
-                command.CommandType = System.Data.CommandType.StoredProcedure;
-                command.Parameters.AddWithValue("@ProductName", productName);
-                command.Parameters.AddWithValue("@UnitPrice", unitPrice);
+                string query = "INSERT INTO Products (Product_Id, ProductName, UnitPrice, QuantityAvailable, Size) VALUES (@Product_Id, @ProductName, @UnitPrice, @QuantityAvailable, @Size)";
 
-                connection.Open();
-                command.ExecuteNonQuery();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Product_Id", GetNextProductId()); // Provide a value for Product_Id
+                    command.Parameters.AddWithValue("@ProductName", productNameTextBox.Text);
+                    command.Parameters.AddWithValue("@UnitPrice", decimal.Parse(unitPriceTextBox.Text));
+                    command.Parameters.AddWithValue("@QuantityAvailable", int.Parse(quantityTextBox.Text));
+                    command.Parameters.AddWithValue("@Size", sizeTextBox.Text);
+
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                }
             }
         }
+
+
 
         private void DeleteProduct(int productId)
         {
@@ -147,12 +155,49 @@ namespace CLOTHING_STORE
             // Pass the product name to the Pants page using Session
             Session["NewProductName"] = productName;
         }
-    }
 
-    public class Product
-    {
-        public int Product_Id { get; set; }
-        public string ProductName { get; set; }
-        public decimal UnitPrice { get; set; }
+        protected void btnUpdateItem_Click(object sender, EventArgs e)
+        {
+           
+        }
+
+        private void UpdateProduct(int productId, string productName, decimal unitPrice, int quantityAvailable, string size)
+        {
+            // Implement logic to update the product in the database
+            // For demonstration purposes, you can use a placeholder method
+            // Replace this with your actual logic to update the product
+            // For example:
+            string connectionString = ConfigurationManager.ConnectionStrings["ClothingStoreDBConnectionString"].ConnectionString;
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string query = "UPDATE Products SET ProductName = @ProductName, UnitPrice = @UnitPrice, QuantityAvailable = @QuantityAvailable, Size = @Size WHERE Product_Id = @ProductId";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@ProductName", productName);
+                    command.Parameters.AddWithValue("@UnitPrice", unitPrice);
+                    command.Parameters.AddWithValue("@QuantityAvailable", quantityAvailable);
+                    command.Parameters.AddWithValue("@Size", size);
+                    command.Parameters.AddWithValue("@ProductId", productId);
+
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+
+
+
+        public class Product
+        {
+            public int Product_Id { get; set; }
+            public string ProductName { get; set; }
+            public decimal UnitPrice { get; set; }
+            public int QuantityAvailable { get; set; }
+            public string Size { get; set; }
+        }
+
     }
 }

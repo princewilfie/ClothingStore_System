@@ -1,8 +1,9 @@
-﻿using System.Configuration;
-using System.Data.SqlClient;
+﻿using System;
+using System.Configuration;
 using System.Data;
-using System;
+using System.Data.SqlClient;
 using System.Linq;
+using System.Web.UI.WebControls;
 
 namespace CLOTHING_STORE
 {
@@ -35,7 +36,7 @@ namespace CLOTHING_STORE
         protected void PopulateProductData()
         {
             string connectionString = ConfigurationManager.ConnectionStrings["ClothingStoreDBConnectionString"].ConnectionString;
-            string query = "SELECT Product_Id, ProductName, UnitPrice FROM Products";
+            string query = "SELECT Product_Id, ProductName, UnitPrice, QuantityAvailable, Size FROM Products";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             using (SqlCommand command = new SqlCommand(query, connection))
@@ -87,6 +88,38 @@ namespace CLOTHING_STORE
             }
         }
 
+        protected void AddToCart_Click(object sender, EventArgs e)
+        {
+            Button btn = (Button)sender;
+            string[] args = btn.CommandArgument.Split('|');
+            int productId = Convert.ToInt32(args[0]);
+            int quantityAvailable = Convert.ToInt32(args[1]);
+
+            int quantitySelected = Convert.ToInt32(((TextBox)btn.Parent.FindControl("quantity_" + productId)).Text);
+
+            if (quantityAvailable == 0)
+            {
+                lblMessage.Text = "Sorry, this product is out of stock.";
+                lblMessage.Visible = true;
+            }
+            else if (quantitySelected > quantityAvailable)
+            {
+                lblMessage.Text = "Selected quantity exceeds available quantity.";
+                lblMessage.Visible = true;
+            }
+            else if (quantitySelected <= 0)
+            {
+                lblMessage.Text = "Please enter a valid quantity.";
+                lblMessage.Visible = true;
+            }
+            else
+            {
+                DataTable cart = GetCartDataTable();
+                AddOrUpdateProductCartItem(cart, productId, quantitySelected);
+                Session["Cart"] = cart;
+                Response.Redirect("Cart.aspx");
+            }
+        }
 
 
     }

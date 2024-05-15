@@ -69,18 +69,20 @@
                 <div class="col-md-12">
                     <h1 class="cart-header">Your Shopping Cart</h1>
                     <asp:GridView ID="gvCart" runat="server" CssClass="table-cart" AutoGenerateColumns="False" OnRowCommand="gvCart_RowCommand">
-                        <Columns>
-                            <asp:BoundField DataField="ProductName" HeaderText="Product Name" />
-                            <asp:BoundField DataField="UnitPrice" HeaderText="Unit Price" DataFormatString="{0:C}" />
-                            <asp:BoundField DataField="Quantity" HeaderText="Quantity" />
-                            <asp:BoundField DataField="TotalPrice" HeaderText="Total Price" DataFormatString="{0:C}" />
-                            <asp:TemplateField>
-                                <ItemTemplate>
-                                    <asp:Button ID="btnRemove" runat="server" Text="Remove" CommandName="Remove" CommandArgument="<%# Container.DataItemIndex %>" CssClass="btn btn-remove" />
-                                </ItemTemplate>
-                            </asp:TemplateField>
-                        </Columns>
-                    </asp:GridView>
+    <Columns>
+        <asp:BoundField DataField="ProductName" HeaderText="Product Name" />
+        <asp:BoundField DataField="Size" HeaderText="Size" />
+        <asp:BoundField DataField="UnitPrice" HeaderText="Unit Price" DataFormatString="{0:C}" />
+        <asp:BoundField DataField="Quantity" HeaderText="Quantity" />
+        <asp:BoundField DataField="TotalPrice" HeaderText="Total Price" DataFormatString="{0:C}" />
+        <asp:TemplateField>
+            <ItemTemplate>
+                <asp:Button ID="btnRemove" runat="server" Text="Remove" CommandName="Remove" CommandArgument="<%# Container.DataItemIndex %>" CssClass="btn btn-remove" />
+            </ItemTemplate>
+        </asp:TemplateField>
+    </Columns>
+</asp:GridView>
+
 
                     <asp:Label ID="lblEmptyCartMessage" runat="server" ForeColor="Red" Visible="false"></asp:Label>
 

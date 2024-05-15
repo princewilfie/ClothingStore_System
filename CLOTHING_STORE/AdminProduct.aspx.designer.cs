@@ -42,6 +42,24 @@ namespace CLOTHING_STORE
         protected global::System.Web.UI.WebControls.TextBox unitPriceTextBox;
 
         /// <summary>
+        /// quantityTextBox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox quantityTextBox;
+
+        /// <summary>
+        /// sizeTextBox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox sizeTextBox;
+
+        /// <summary>
         /// btnAddItem control.
         /// </summary>
         /// <remarks>

@@ -9,6 +9,7 @@
                 <asp:BoundField DataField="UnitPrice" HeaderText="Unit Price" DataFormatString="{0:C}" />
                 <asp:BoundField DataField="Quantity" HeaderText="Quantity" />
                 <asp:BoundField DataField="TotalPrice" HeaderText="Total Price" DataFormatString="{0:C}" />
+                <asp:BoundField DataField="Size" HeaderText="Size" />
             </Columns>
         </asp:GridView>
         <asp:Label ID="lblMessage" runat="server" CssClass="text-muted"></asp:Label>

@@ -41,6 +41,11 @@ namespace CLOTHING_STORE
                 {
                     cart.Columns.Add("ItemId", typeof(int));
                 }
+                if (!cart.Columns.Contains("Size"))
+                {
+                    cart.Columns.Add("Size", typeof(string)); // Add Size column if it doesn't exist
+                }
+
 
                 foreach (DataRow row in cart.Rows)
                 {
@@ -50,6 +55,8 @@ namespace CLOTHING_STORE
                         var productDetails = GetProductDetailsById(productId);
                         row["ProductName"] = productDetails.Item1;
                         row["UnitPrice"] = productDetails.Item2;
+                        string size = GetSizeById(productId); // Assuming you have a method to fetch size by product ID
+                        row["Size"] = size;
                     }
                     else if (row.Table.Columns.Contains("Tshirt_Id"))
                     {
@@ -154,7 +161,8 @@ namespace CLOTHING_STORE
                 if (cart != null && cart.Rows.Count > 0)
                 {
                     string connectionString = ConfigurationManager.ConnectionStrings["ClothingStoreDBConnectionString"].ConnectionString;
-                    string insertQuery = "INSERT INTO Orders (ProductName, Quantity, UnitPrice, TotalPrice) VALUES (@ProductName, @Quantity, @UnitPrice, @TotalPrice)";
+                    string insertQuery = "INSERT INTO Orders (ProductName, Quantity, UnitPrice, TotalPrice, Size) VALUES (@ProductName, @Quantity, @UnitPrice, @TotalPrice, @Size)";
+                    string updateQuery = "UPDATE Products SET QuantityAvailable = QuantityAvailable - @Quantity WHERE Product_Id = @ProductId";
 
                     using (SqlConnection connection = new SqlConnection(connectionString))
                     {
@@ -167,17 +175,24 @@ namespace CLOTHING_STORE
                                 command.Parameters.AddWithValue("@Quantity", (int)row["Quantity"]);
                                 command.Parameters.AddWithValue("@UnitPrice", (decimal)row["UnitPrice"]);
                                 command.Parameters.AddWithValue("@TotalPrice", (decimal)row["TotalPrice"]);
+                                command.Parameters.AddWithValue("@Size", (string)row["Size"]);
 
                                 command.ExecuteNonQuery();
+                            }
+
+                            // Update quantity available in the Products table
+                            using (SqlCommand updateCommand = new SqlCommand(updateQuery, connection))
+                            {
+                                updateCommand.Parameters.AddWithValue("@Quantity", (int)row["Quantity"]);
+                                updateCommand.Parameters.AddWithValue("@ProductId", (int)row["Product_Id"]);
+
+                                updateCommand.ExecuteNonQuery();
                             }
                         }
                     }
 
                     // Clear the cart session variable
                     Session["Cart"] = null;
-
-                    // Log to confirm reaching here
-                    System.Diagnostics.Debug.WriteLine("Redirecting to Order.aspx");
 
                     // Redirect to Order.aspx page
                     Response.Redirect("~/Order.aspx");
@@ -196,6 +211,7 @@ namespace CLOTHING_STORE
             }
         }
 
+
         protected void DisplayCartContents()
         {
             DataTable cart = (DataTable)Session["Cart"];
@@ -211,5 +227,32 @@ namespace CLOTHING_STORE
                 lblEmptyCartMessage.Visible = true;
             }
         }
+
+        private string GetSizeById(int productId)
+        {
+            string size = ""; // Default value
+
+            // Establish your database connection and query to retrieve size based on product ID
+            string connectionString = ConfigurationManager.ConnectionStrings["ClothingStoreDBConnectionString"].ConnectionString;
+            string query = "SELECT Size FROM Products WHERE Product_Id = @ProductId";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@ProductId", productId);
+
+                connection.Open();
+                object result = command.ExecuteScalar();
+
+                // Check if size value is retrieved from the database
+                if (result != null)
+                {
+                    size = result.ToString(); // Assign the retrieved size value
+                }
+            }
+
+            return size;
+        }
+
     }
 }

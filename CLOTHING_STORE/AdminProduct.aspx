@@ -1,7 +1,6 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="AdminProduct.aspx.cs" Inherits="CLOTHING_STORE.AdminProduct" %>
 
 <!DOCTYPE html>
-
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>Admin Product</title>
@@ -52,33 +51,41 @@
             </button>
 
             <!-- Modal -->
-<div class="modal fade" id="addItemModal" tabindex="-1" role="dialog" aria-labelledby="addItemModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addItemModalLabel">Add New Item</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- Form to add new item -->
-                <div class="form-group">
-                    <label for="productName">Product Name:</label>
-                    <asp:TextBox ID="productNameTextBox" runat="server" CssClass="form-control" />
+            <div class="modal fade" id="addItemModal" tabindex="-1" role="dialog" aria-labelledby="addItemModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addItemModalLabel">Add New Item</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Form to add new item -->
+                            <div class="form-group">
+                                <label for="productName">Product Name:</label>
+                                <asp:TextBox ID="productNameTextBox" runat="server" CssClass="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label for="unitPrice">Unit Price:</label>
+                                <asp:TextBox ID="unitPriceTextBox" runat="server" CssClass="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label for="quantityAvailable">Quantity Available:</label>
+                                <asp:TextBox ID="quantityTextBox" runat="server" CssClass="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label for="size">Size:</label>
+                                <asp:TextBox ID="sizeTextBox" runat="server" CssClass="form-control" />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <asp:Button ID="btnAddItem" runat="server" Text="Add Item" OnClick="btnAddItem_Click" CssClass="btn btn-primary" />
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="unitPrice">Unit Price:</label>
-                    <asp:TextBox ID="unitPriceTextBox" runat="server" CssClass="form-control" />
-                </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <asp:Button ID="btnAddItem" runat="server" Text="Add Item" OnClick="btnAddItem_Click" CssClass="btn btn-primary" />
-            </div>
-        </div>
-    </div>
-</div>
 
             <!-- GridView to display products -->
             <asp:GridView ID="GridViewProducts" runat="server" CssClass="table table-bordered table-striped mt-3" AutoGenerateColumns="False" OnRowCommand="GridViewProducts_RowCommand">
@@ -86,6 +93,8 @@
                     <asp:BoundField DataField="Product_Id" HeaderText="Product ID" />
                     <asp:BoundField DataField="ProductName" HeaderText="Product Name" />
                     <asp:BoundField DataField="UnitPrice" HeaderText="Unit Price" />
+                    <asp:BoundField DataField="QuantityAvailable" HeaderText="Quantity Available" />
+                    <asp:BoundField DataField="Size" HeaderText="Size" />
                     <asp:TemplateField HeaderText="Actions">
                         <ItemTemplate>
                             <asp:Button ID="btnDelete" runat="server" CommandName="DeleteProduct" CommandArgument='<%# Eval("Product_Id") %>' Text="Delete" CssClass="btn btn-danger" OnClientClick="return confirm('Are you sure you want to delete this product?');" />
