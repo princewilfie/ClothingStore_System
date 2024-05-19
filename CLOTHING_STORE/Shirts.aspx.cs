@@ -1,8 +1,9 @@
-﻿using System.Configuration;
-using System.Data.SqlClient;
+﻿using System;
+using System.Configuration;
 using System.Data;
-using System;
+using System.Data.SqlClient;
 using System.Linq;
+using System.Web.UI.WebControls;
 
 namespace CLOTHING_STORE
 {
@@ -13,6 +14,7 @@ namespace CLOTHING_STORE
             if (!IsPostBack)
             {
                 PopulateTshirtData();
+                
             }
 
             if (Request["__EVENTTARGET"] == "addToCart")
@@ -35,7 +37,7 @@ namespace CLOTHING_STORE
         protected void PopulateTshirtData()
         {
             string connectionString = ConfigurationManager.ConnectionStrings["ClothingStoreDBConnectionString"].ConnectionString;
-            string query = "SELECT Tshirt_Id, TshirtName, UnitPrice FROM Tshirt";
+            string query = "SELECT Tshirt_Id, TshirtName, UnitPrice, QuantityAvailable, Size FROM Tshirt";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             using (SqlCommand command = new SqlCommand(query, connection))
@@ -43,11 +45,16 @@ namespace CLOTHING_STORE
                 connection.Open();
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
+                   
+                 
+
                     TshirtsRepeater.DataSource = reader;
                     TshirtsRepeater.DataBind();
                 }
             }
         }
+
+
 
         protected DataTable GetCartDataTable()
         {
@@ -87,9 +94,38 @@ namespace CLOTHING_STORE
             }
         }
 
+        protected void AddToCart_Click(object sender, EventArgs e)
+        {
+            Button btn = (Button)sender;
+            string[] args = btn.CommandArgument.Split('|');
+            int tshirtId = Convert.ToInt32(args[0]);
+            int quantityAvailable = Convert.ToInt32(args[1]);
 
+            int quantitySelected = Convert.ToInt32(((TextBox)btn.Parent.FindControl("quantity_" + tshirtId)).Text);
 
+            if (quantityAvailable == 0)
+            {
+                lblMessage.Text = "Sorry, this product is out of stock.";
+                lblMessage.Visible = true;
+            }
+            else if (quantitySelected > quantityAvailable)
+            {
+                lblMessage.Text = "Selected quantity exceeds available quantity.";
+                lblMessage.Visible = true;
+            }
+            else if (quantitySelected <= 0)
+            {
+                lblMessage.Text = "Please enter a valid quantity.";
+                lblMessage.Visible = true;
+            }
+            else
+            {
+                DataTable cart = GetCartDataTable();
+                AddOrUpdateTshirtCartItem(cart, tshirtId, quantitySelected);
+                Session["Cart"] = cart;
+                Response.Redirect("Cart.aspx");
+            }
+        }
 
     }
 }
-

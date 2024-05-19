@@ -24,10 +24,14 @@
                                         <h5 class="card-title"><%# Eval("TshirtName") %></h5>
                                         <!-- Product price -->
                                         <p class="card-text">Price: P<%# string.Format("{0:N0}", Eval("UnitPrice")) %></p>
+                                        <!-- Quantity available -->
+                                        <p class="card-text">Quantity Available: <%# Eval("QuantityAvailable") %></p>
+                                        <!-- Size -->
+                                        <p class="card-text">Size: <%# Eval("Size") %></p>
                                         <!-- Quantity input field -->
                                         <input type="number" id='quantity_<%# Eval("Tshirt_Id") %>' min="1" value="1" />
                                         <!-- Add to Cart button -->
-                                        <asp:Button runat="server" ID='btnAddToCart' Text="Add to Cart" CssClass="btn btn-primary mt-2 addToCartBtn" OnClientClick='<%# "addToCart(" + Eval("Tshirt_Id") + ")" %>' />
+                                        <asp:Button runat="server" ID='btnAddToCart' Text="Add to Cart" CssClass="btn btn-primary mt-2 addToCartBtn" OnClientClick='<%# "addToCart(" + Eval("Tshirt_Id") + ", " + Eval("QuantityAvailable") + ")" %>' />
                                     </div>
                                 </div>
                             </div>
@@ -47,9 +51,29 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
-        function addToCart(tshirtId) {
+        function addToCart(tshirtId, quantityAvailable) {
             var quantityInput = document.getElementById('quantity_' + tshirtId);
             var quantity = quantityInput.value;
+
+            // Convert quantity to integer
+            var quantityInt = parseInt(quantity);
+
+            // Check if quantity is not a number or less than 1
+            if (isNaN(quantityInt) || quantityInt < 1) {
+                alert('Please enter a valid quantity.');
+                return;
+            }
+
+            // Check if quantity exceeds available quantity or is 0
+            if (quantityInt > quantityAvailable) {
+                alert('Selected quantity exceeds available quantity.');
+                return;
+            }
+
+            if (quantityAvailable == 0) {
+                alert('Item is out of stock.');
+                return;
+            }
 
             // Send the tshirt ID and quantity to the server
             __doPostBack('addToCart', tshirtId + '|' + quantity);

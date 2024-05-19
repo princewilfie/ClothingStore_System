@@ -71,6 +71,14 @@
                                 <label for="UnitPrice">Unit Price:</label>
                                 <asp:TextBox ID="UnitPriceTextBox" runat="server" CssClass="form-control" />
                             </div>
+                            <div class="form-group">
+                                <label for="QuantityAvailable">Quantity Available:</label>
+                                <asp:TextBox ID="QuantityTextBox" runat="server" CssClass="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label for="Size">Size:</label>
+                                <asp:TextBox ID="SizeTextBox" runat="server" CssClass="form-control" />
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -86,6 +94,8 @@
                     <asp:BoundField DataField="Tshirt_Id" HeaderText="Tshirt ID" />
                     <asp:BoundField DataField="TshirtName" HeaderText="Tshirt Name" />
                     <asp:BoundField DataField="UnitPrice" HeaderText="Unit Price" />
+                    <asp:BoundField DataField="QuantityAvailable" HeaderText="Quantity Available" />
+                    <asp:BoundField DataField="Size" HeaderText="Size" />
                     <asp:TemplateField HeaderText="Actions">
                         <ItemTemplate>
                             <asp:Button ID="btnDelete" runat="server" CommandName="DeleteTshirt" CommandArgument='<%# Eval("Tshirt_Id") %>' Text="Delete" CssClass="btn btn-danger" OnClientClick="return confirm('Are you sure you want to delete this Tshirt?');" />

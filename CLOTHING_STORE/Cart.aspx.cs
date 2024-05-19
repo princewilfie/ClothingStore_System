@@ -64,12 +64,15 @@ namespace CLOTHING_STORE
                         var tshirtDetails = GetTshirtDetailsById(tshirtId);
                         row["ProductName"] = tshirtDetails.Item1;
                         row["UnitPrice"] = tshirtDetails.Item2;
+                        string size = GetSizeByTshirtId(tshirtId); // Get size by t-shirt ID
+                        row["Size"] = size;
                     }
 
                     int quantity = Convert.ToInt32(row["Quantity"]);
                     decimal unitPrice = Convert.ToDecimal(row["UnitPrice"]);
                     row["TotalPrice"] = quantity * unitPrice;
                 }
+
 
                 gvCart.DataSource = cart;
                 gvCart.DataBind();
@@ -161,32 +164,62 @@ namespace CLOTHING_STORE
                 if (cart != null && cart.Rows.Count > 0)
                 {
                     string connectionString = ConfigurationManager.ConnectionStrings["ClothingStoreDBConnectionString"].ConnectionString;
-                    string insertQuery = "INSERT INTO Orders (ProductName, Quantity, UnitPrice, TotalPrice, Size) VALUES (@ProductName, @Quantity, @UnitPrice, @TotalPrice, @Size)";
-                    string updateQuery = "UPDATE Products SET QuantityAvailable = QuantityAvailable - @Quantity WHERE Product_Id = @ProductId";
+                    string productInsertQuery = "INSERT INTO Orders (ProductName, Quantity, UnitPrice, TotalPrice, Size) VALUES (@ProductName, @Quantity, @UnitPrice, @TotalPrice, @Size)";
+                    string productUpdateQuery = "UPDATE Products SET QuantityAvailable = QuantityAvailable - @Quantity WHERE Product_Id = @ProductId";
+                    string tshirtInsertQuery = "INSERT INTO Orders (ProductName, Quantity, UnitPrice, TotalPrice, Size) VALUES (@ProductName, @Quantity, @UnitPrice, @TotalPrice, @Size)";
+                    string tshirtUpdateQuery = "UPDATE Tshirt SET QuantityAvailable = QuantityAvailable - @Quantity WHERE Tshirt_Id = @TshirtId";
 
                     using (SqlConnection connection = new SqlConnection(connectionString))
                     {
                         connection.Open();
                         foreach (DataRow row in cart.Rows)
                         {
-                            using (SqlCommand command = new SqlCommand(insertQuery, connection))
+                            // Determine whether the item is a product or a T-shirt and execute the appropriate SQL queries
+                            if (row.Table.Columns.Contains("Product_Id"))
                             {
-                                command.Parameters.AddWithValue("@ProductName", (string)row["ProductName"]);
-                                command.Parameters.AddWithValue("@Quantity", (int)row["Quantity"]);
-                                command.Parameters.AddWithValue("@UnitPrice", (decimal)row["UnitPrice"]);
-                                command.Parameters.AddWithValue("@TotalPrice", (decimal)row["TotalPrice"]);
-                                command.Parameters.AddWithValue("@Size", (string)row["Size"]);
+                                // Product item
+                                using (SqlCommand command = new SqlCommand(productInsertQuery, connection))
+                                {
+                                    command.Parameters.AddWithValue("@ProductName", (string)row["ProductName"]);
+                                    command.Parameters.AddWithValue("@Quantity", (int)row["Quantity"]);
+                                    command.Parameters.AddWithValue("@UnitPrice", (decimal)row["UnitPrice"]);
+                                    command.Parameters.AddWithValue("@TotalPrice", (decimal)row["TotalPrice"]);
+                                    command.Parameters.AddWithValue("@Size", (string)row["Size"]);
 
-                                command.ExecuteNonQuery();
+                                    command.ExecuteNonQuery();
+                                }
+
+                                // Update quantity available for products
+                                using (SqlCommand updateCommand = new SqlCommand(productUpdateQuery, connection))
+                                {
+                                    updateCommand.Parameters.AddWithValue("@Quantity", (int)row["Quantity"]);
+                                    updateCommand.Parameters.AddWithValue("@ProductId", (int)row["Product_Id"]);
+
+                                    updateCommand.ExecuteNonQuery();
+                                }
                             }
-
-                            // Update quantity available in the Products table
-                            using (SqlCommand updateCommand = new SqlCommand(updateQuery, connection))
+                            else if (row.Table.Columns.Contains("Tshirt_Id"))
                             {
-                                updateCommand.Parameters.AddWithValue("@Quantity", (int)row["Quantity"]);
-                                updateCommand.Parameters.AddWithValue("@ProductId", (int)row["Product_Id"]);
+                                // T-shirt item
+                                using (SqlCommand command = new SqlCommand(tshirtInsertQuery, connection))
+                                {
+                                    command.Parameters.AddWithValue("@ProductName", (string)row["ProductName"]);
+                                    command.Parameters.AddWithValue("@Quantity", (int)row["Quantity"]);
+                                    command.Parameters.AddWithValue("@UnitPrice", (decimal)row["UnitPrice"]);
+                                    command.Parameters.AddWithValue("@TotalPrice", (decimal)row["TotalPrice"]);
+                                    command.Parameters.AddWithValue("@Size", (string)row["Size"]);
 
-                                updateCommand.ExecuteNonQuery();
+                                    command.ExecuteNonQuery();
+                                }
+
+                                // Update quantity available for T-shirts
+                                using (SqlCommand updateCommand = new SqlCommand(tshirtUpdateQuery, connection))
+                                {
+                                    updateCommand.Parameters.AddWithValue("@Quantity", (int)row["Quantity"]);
+                                    updateCommand.Parameters.AddWithValue("@TshirtId", (int)row["Tshirt_Id"]);
+
+                                    updateCommand.ExecuteNonQuery();
+                                }
                             }
                         }
                     }
@@ -253,6 +286,34 @@ namespace CLOTHING_STORE
 
             return size;
         }
+
+
+        private string GetSizeByTshirtId(int tshirtId)
+        {
+            string size = ""; // Default value
+
+            // Establish your database connection and query to retrieve size based on t-shirt ID
+            string connectionString = ConfigurationManager.ConnectionStrings["ClothingStoreDBConnectionString"].ConnectionString;
+            string query = "SELECT Size FROM Tshirt WHERE Tshirt_Id = @TshirtId";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@TshirtId", tshirtId);
+
+                connection.Open();
+                object result = command.ExecuteScalar();
+
+                // Check if size value is retrieved from the database
+                if (result != null)
+                {
+                    size = result.ToString(); // Assign the retrieved size value
+                }
+            }
+
+            return size;
+        }
+
 
     }
 }
