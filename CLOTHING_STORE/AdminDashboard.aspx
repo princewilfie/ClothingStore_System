@@ -35,6 +35,30 @@
         .logout-btn {
             margin-left: auto; /* Push the button to the right */
         }
+        .export-btn {
+            margin: 5px;
+        }
+        /* Custom styling for export buttons */
+        .export-btn-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .export-btn {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 18px;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .export-btn:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -64,9 +88,17 @@
 
         <div class="container">
             <h2 class="dashboard-title">Admin Dashboard</h2>
+
+            <h1><center>REPORTS</center></h1>
             <!-- Your dashboard content goes here -->
+            <div class="export-btn-container">
+                <asp:Button ID="btnExportUsers" runat="server" Text="Export Users" CssClass="export-btn" OnClick="btnExportUsers_Click" />
+                <asp:Button ID="btnExportProducts" runat="server" Text="Export Products" CssClass="export-btn" OnClick="btnExportProducts_Click" />
+                <asp:Button ID="btnExportPants" runat="server" Text="Export Pants" CssClass="export-btn" OnClick="btnExportPants_Click" />
+                <asp:Button ID="btnExportOrders" runat="server" Text="Export Orders" CssClass="export-btn" OnClick="btnExportOrders_Click" />
+                <asp:Button ID="btnExportTshirt" runat="server" Text="Export Tshirt" CssClass="export-btn" OnClick="btnExportTshirt_Click" />
+            </div>
         </div>
-        
     </form>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
