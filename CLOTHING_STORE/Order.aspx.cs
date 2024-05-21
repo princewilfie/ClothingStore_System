@@ -18,7 +18,7 @@ namespace CLOTHING_STORE
         protected void DisplayOrderDetails()
         {
             string connectionString = ConfigurationManager.ConnectionStrings["ClothingStoreDBConnectionString"].ConnectionString;
-            string selectQuery = "SELECT ProductName, Quantity, UnitPrice, TotalPrice, Size FROM Orders";
+            string selectQuery = "SELECT OrderId, ProductName, Quantity, UnitPrice, TotalPrice, Size FROM Orders";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             using (SqlCommand command = new SqlCommand(selectQuery, connection))
@@ -31,8 +31,8 @@ namespace CLOTHING_STORE
                         DataTable orderDetails = new DataTable();
                         orderDetails.Load(reader);
 
-                        gvOrderDetails.DataSource = orderDetails;
-                        gvOrderDetails.DataBind();
+                        gvOrders.DataSource = orderDetails;
+                        gvOrders.DataBind();
 
                         lblMessage.Text = ""; // Clear any previous message
                     }

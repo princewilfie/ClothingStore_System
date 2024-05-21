@@ -160,6 +160,7 @@
     <Content Include="images\tshirt2.jpg" />
     <Content Include="LoginPage.aspx" />
     <Content Include="Order.aspx" />
+    <Content Include="OrderDetails.aspx" />
     <Content Include="Pants.aspx" />
     <Content Include="RegistrationPage.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
@@ -322,6 +323,13 @@
     </Compile>
     <Compile Include="Order.aspx.designer.cs">
       <DependentUpon>Order.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="OrderDetails.aspx.cs">
+      <DependentUpon>OrderDetails.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="OrderDetails.aspx.designer.cs">
+      <DependentUpon>OrderDetails.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pants.aspx.cs">
       <DependentUpon>Pants.aspx</DependentUpon>
