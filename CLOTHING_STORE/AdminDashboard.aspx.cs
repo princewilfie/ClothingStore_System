@@ -11,9 +11,35 @@ namespace CLOTHING_STORE
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            if (!IsPostBack)
+            {
+                PopulateCounts();
+            }
+        }
+        private void PopulateCounts()
+        {
+            lblUserCount.Text = GetCount("Users").ToString();
+            lblProductCount.Text = GetCount("Products").ToString();
+            lblPantsCount.Text = GetCount("Pants").ToString();
+            lblOrderCount.Text = GetCount("Orders").ToString();
+            lblTshirtCount.Text = GetCount("Tshirt").ToString();
         }
 
+        private int GetCount(string tableName)
+        {
+            string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\PC\\Documents\\PRACTICE\\CLOTHING_STORE\\CLOTHING_STORE\\App_Data\\ClothingStoreDB.mdf;Integrated Security=True"; // Replace with your actual connection string
+            string query = "SELECT COUNT(*) FROM " + tableName;
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    conn.Open();
+                    int count = (int)cmd.ExecuteScalar();
+                    return count;
+                }
+            }
+        }
         protected void btnLogout_Click(object sender, EventArgs e)
         {
             // Redirect to AdminLogin.aspx
@@ -45,6 +71,17 @@ namespace CLOTHING_STORE
         {
             ExportToCSV("Tshirt");
         }
+
+        protected void UsersGridView_RowDeleting(object sender, GridViewDeleteEventArgs e)
+        {
+            // Implement your logic to handle row deletion here
+        }
+
+        protected void UsersGridView_RowEditing(object sender, GridViewEditEventArgs e)
+        {
+            // Implement your logic to handle row editing here
+        }
+
 
         private void ExportToCSV(string tableName)
         {
@@ -117,8 +154,7 @@ namespace CLOTHING_STORE
                     }
                 }
             }
+
         }
     }
 }
-    
-

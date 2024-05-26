@@ -33,6 +33,51 @@ namespace CLOTHING_STORE
         protected global::System.Web.UI.WebControls.Button btnLogout;
 
         /// <summary>
+        /// lblUserCount control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblUserCount;
+
+        /// <summary>
+        /// lblProductCount control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblProductCount;
+
+        /// <summary>
+        /// lblPantsCount control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblPantsCount;
+
+        /// <summary>
+        /// lblOrderCount control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblOrderCount;
+
+        /// <summary>
+        /// lblTshirtCount control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblTshirtCount;
+
+        /// <summary>
         /// btnExportUsers control.
         /// </summary>
         /// <remarks>
@@ -76,5 +121,14 @@ namespace CLOTHING_STORE
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnExportTshirt;
+
+        /// <summary>
+        /// UsersGridView control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView UsersGridView;
     }
 }
